@@ -1,21 +1,5 @@
-const { Client } = require('pg');
+const client = require("../models/client");
 
-const options = {
-  user: "postgres",
-  host: "localhost",
-  database: "logistic",
-  password: "strongpwd",
-  port: "5432",
-}
-
-const client = new Client(options);
-client.connect(err => {
-  if (err) {
-    console.error('connection error', err.stack)
-  } else {
-    console.log('connected')
-  }
-})
 
 const getGpsList = (request, response) => {
   client.query('SELECT * FROM log_location ORDER BY id ASC', (error, results) => {
