@@ -1,0 +1,234 @@
+import pool from './pool';
+
+pool.on('connect', () => {
+  console.log('connected to the db');
+});
+user: postgres,
+host: 127.0.0.1,
+database: logistic,
+password: strongpwd,
+port: 5432,
+
+
+const createVehiclesTable = () => {
+  const vehicleCreateQuery =
+  `CREATE TABLE IF NOT EXISTS vehicle
+  (id SERIAL PRIMARY KEY,
+  vehicle_plate VARCHAR(20) UNIQUE NOT NULL,
+  current_status INTEGER NOT NULL,
+  is_active BOOLEAN)`;
+
+  pool.query(vehicleCreateQuery)
+    .then((res) => {
+      console.log(res);
+      pool.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      pool.end();
+    });
+};
+
+/**
+ * Create Buses Table
+ */
+const createDevicesTable = () => {
+  const deviceCreateQuery =
+  `CREATE TABLE IF NOT EXISTS devices
+    (id SERIAL PRIMARY KEY,
+    device_type_id serial PRIMARY KEY,
+    device_name VARCHAR ( 75 ) NOT NULL,
+  	is_online BOOLEAN,
+    is_active BOOLEAN)`;
+
+  pool.query(deviceCreateQuery)
+    .then((res) => {
+      console.log(res);
+      pool.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      pool.end();
+    });
+};
+
+/**
+ * Create Trip Table
+ */
+const createDevicesTypeTable = () => {
+  const deviceTypeCreateQuery =
+  `CREATE TABLE IF NOT EXISTS device_type
+    (id SERIAL PRIMARY KEY,
+    device_name VARCHAR ( 75 ) NOT NULL,
+    device_description VARCHAR ( 255 ) NOT NULL,
+    is_active BOOLEAN`;
+
+  pool.query(deviceTypeCreateQuery)
+    .then((res) => {
+      console.log(res);
+      pool.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      pool.end();
+    });
+};
+
+/**
+ * Create Booking Table
+ */
+const createLogTempTable = () => {
+  const logTempCreateQuery =
+  `CREATE TABLE IF NOT EXISTS log_tempature
+  (id SERIAL,
+    vehicle_id INTEGER REFERENCES vehicle(id) ON DELETE CASCADE,
+    device_id INTEGER REFERENCES devices(id) ON DELETE CASCADE,
+    read_data VARCHAR ( 50 ) NOT NULL,
+    created_on DATE NOT NULL,
+    PRIMARY KEY (id, vehicle_id, device_id))`;
+  pool.query(logTempCreateQuery)
+    .then((res) => {
+      console.log(res);
+      pool.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      pool.end();
+    });
+};
+
+const createLogLocTable = () => {
+  const logLocCreateQuery =
+  `CREATE TABLE IF NOT EXISTS log_location
+  (id SERIAL,
+    vehicle_id INTEGER REFERENCES vehicle(id) ON DELETE CASCADE,
+    device_id INTEGER REFERENCES devices(id) ON DELETE CASCADE,
+    latitude VARCHAR ( 50 ) NOT NULL,
+    longtitude VARCHAR ( 50 ) NOT NULL,
+    created_on DATE NOT NULL,
+    PRIMARY KEY (id, vehicle_id, device_id))`;
+  pool.query(logLocCreateQuery)
+    .then((res) => {
+      console.log(res);
+      pool.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      pool.end();
+    });
+};
+
+/**
+ * Drop User Table
+ */
+const dropVehicleTable = () => {
+  const vehiclesDropQuery = 'DROP TABLE IF EXISTS vehicle';
+  pool.query(vehiclesDropQuery)
+    .then((res) => {
+      console.log(res);
+      pool.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      pool.end();
+    });
+};
+
+
+/**
+ * Drop Bus Table
+ */
+const dropDevicesTable = () => {
+  const devicesDropQuery = 'DROP TABLE IF EXISTS devices';
+  pool.query(devicesDropQuery)
+    .then((res) => {
+      console.log(res);
+      pool.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      pool.end();
+    });
+};
+
+/**
+ * Drop Trip Table
+ */
+const dropDeviceTypeTable = () => {
+  const deviceTypeDropQuery = 'DROP TABLE IF EXISTS device_type';
+  pool.query(deviceTypeDropQuery)
+    .then((res) => {
+      console.log(res);
+      pool.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      pool.end();
+    });
+};
+
+/**
+ * Drop Bus Table
+ */
+const dropLogTempTable = () => {
+  const logTempDropQuery = 'DROP TABLE IF EXISTS log_tempature';
+  pool.query(logTempDropQuery)
+    .then((res) => {
+      console.log(res);
+      pool.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      pool.end();
+    });
+};
+
+const dropLogLocTable = () => {
+  const logLogDropQuery = 'DROP TABLE IF EXISTS log_location';
+  pool.query(logLogDropQuery)
+    .then((res) => {
+      console.log(res);
+      pool.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      pool.end();
+    });
+};
+
+
+/**
+ * Create All Tables
+ */
+const createAllTables = () => {
+  createVehiclesTable();
+  createDevicesTable();
+  createDevicesTypeTable();
+  createLogTempTable();
+  createLogLocTable();
+};
+
+
+/**
+ * Drop All Tables
+ */
+const dropAllTables = () => {
+  dropVehicleTable();
+  dropDevicesTable();
+  dropDeviceTypeTable();
+  dropLogTempTable();
+  dropLogLocTable();
+};
+
+pool.on('remove', () => {
+  console.log('pool removed');
+  process.exit(0);
+});
+
+
+export {
+  createAllTables,
+  dropAllTables,
+};
+
+require('make-runnable');
